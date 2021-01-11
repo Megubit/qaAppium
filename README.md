@@ -8,6 +8,7 @@ This repository contains a simple test for RoboKiller Anroid version. iOS versio
 * Checks if previous call was blocked
 * Adds previous number to contacts
 * Retries call and check if call was blocked
+* Enables call filtering by blacklist and retries call
 * Removes number from contacts
 
 ## Tools/Frameworks used

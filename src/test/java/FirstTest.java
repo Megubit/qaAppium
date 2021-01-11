@@ -39,7 +39,7 @@ public class FirstTest {
         caps.setCapability("app", APP);
         driver = new AndroidDriver(new URL(APPIUM), caps);
         wait = new WebDriverWait(driver, timeOut);
-        
+
         // used to check if application loaded
         wait.until(ExpectedConditions.presenceOfElementLocated(MobileBy.id("co.teltech.callblocker:id/counterBlockedCalls")));
     }
@@ -125,12 +125,41 @@ public class FirstTest {
     }
 
     @Test
-    @DisplayName("Remove number from contact")
+    @DisplayName("Enable blacklisting")
     @Order(6)
+    public void enableBlacklisting() throws InterruptedException {
+
+        driver.findElement(MobileBy.id("co.teltech.callblocker:id/radioOptionBlacklist")).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(MobileBy.id("co.teltech.callblocker:id/buttonEditBlacklist"))).click();
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(MobileBy.id("co.teltech.callblocker:id/buttonAddContact"))).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(MobileBy.AccessibilityId("TestName"))).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(MobileBy.AccessibilityId("Navigate up"))).click();
+
+        driver.makeGsmCall(phoneNumber, GsmCallActions.CALL);
+
+        // wait for call to go trough
+        Thread.sleep(2000);
+
+        WebElement call = driver.findElement(MobileBy.id("co.teltech.callblocker:id/counterBlockedCalls"));
+
+        if(call.isDisplayed())
+            call.click();
+
+        wait.until(ExpectedConditions.attributeToBe(MobileBy.id("co.teltech.callblocker:id/counterBlockedCalls"),"text", "2"));
+    }
+
+    @Test
+    @DisplayName("Remove number from contact")
+    @Order(7)
     public void removeFromContact() throws InterruptedException {
         driver.startActivity(new Activity("com.android.dialer", "main.impl.MainActivity"));
         wait.until(ExpectedConditions.presenceOfElementLocated(MobileBy.id("com.android.dialer:id/contacts_tab"))).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(MobileBy.AccessibilityId("Quick contact for TestName"))).click();
+
+        // use sleep for popup to open, rather than wait by xpath
+        Thread.sleep(2000);
+
         wait.until(ExpectedConditions.presenceOfElementLocated(MobileBy.AccessibilityId("More options"))).click();
 
         // use sleep for popup to open, rather than wait by xpath
